@@ -56,7 +56,9 @@ export default function ReactSlidySlider({
   numOfSlides,
   showArrows,
   slide,
-  slideSpeed
+  slideSpeed,
+  autoPlay,
+  autoPlaySpeed = 5000
 }) {
   const [slidyInstance, setSlidyInstance] = useState({
     goTo: noop,
@@ -68,8 +70,7 @@ export default function ReactSlidySlider({
   const [maxIndex, setMaxIndex] = useState(initialSlide)
   const sliderContainerDOMEl = useRef(null)
   const slidesDOMEl = useRef(null)
-
-  const items = convertToArrayFrom(children).filter(child => child !== null);
+  const items = convertToArrayFrom(children).filter(child => child !== null)
 
   useEffect(
     function() {
@@ -77,6 +78,13 @@ export default function ReactSlidySlider({
     },
     [slide] // eslint-disable-line
   )
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      items.length > numOfSlides && slidyInstance.next()
+    }, autoPlaySpeed)
+    return () => clearTimeout(timer)
+  }, [])
 
   useEffect(
     function() {
